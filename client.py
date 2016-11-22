@@ -6,7 +6,7 @@ import avango.script
 import avango.gua as agua
 
 from utils import *
-from scene import viveMonkey
+from lib.scene import viveMonkey
 
 # Map internal host names to their IP’s in the cluster
 kinect_hosts = {
