@@ -41,7 +41,17 @@ def main(SERVER_IP, CLIENT_IP):
         scene_graph_name="scenegraph",
         resolution=size,
         output_window_name="window")
-    screen = create_screen(name="screen", children=[cam])
+    
+    #todo: fix light
+    light = avango.gua.nodes.LightNode(
+        Type=avango.gua.LightType.POINT,
+        Name="light",
+        Color=avango.gua.Color(1.0, 1.0, 1.0),
+        Brightness=100.0,
+        Transform=(avango.gua.make_trans_mat(0.25, 5.0, 5.0) *
+                   avango.gua.make_scale_mat(100)))
+
+    screen = create_screen(name="screen", children=[cam, light])
 
     graph.Root.value.Children.value.append(screen)
     viewer = create_viewer(graph=graph, window=window)
@@ -54,6 +64,7 @@ def main(SERVER_IP, CLIENT_IP):
 
 
 def create_camera_with_res_passes(
+    #change camera position for Athena here
     left_screen_path,
     scene_graph_name,
     resolution,
@@ -63,7 +74,7 @@ def create_camera_with_res_passes(
                                 SceneGraph=scene_graph_name,
                                 Resolution=resolution,
                                 OutputWindowName=output_window_name,
-                                Transform=agua.make_trans_mat(0.0, 1.0, 3.0))
+                                Transform=agua.make_trans_mat(0.25, 2.5, 5.0))
 
     res_pass = agua.nodes.ResolvePassDescription()
     res_pass.EnableSSAO.value = True
@@ -84,6 +95,7 @@ def create_camera_with_res_passes(
         agua.nodes.BBoxPassDescription(),
         res_pass,
         anti_aliasing,
+        agua.nodes.TexturedScreenSpaceQuadPassDescription()   
     ])
 
     cam.PipelineDescription.value = pipeline_description

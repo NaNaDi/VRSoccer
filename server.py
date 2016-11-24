@@ -5,6 +5,8 @@ import avango.gua
 from lib.ViewingSetup import ViewingSetup
 from lib.scene import create_scene
 
+from utils import *
+
 import argparse
 
 # Map internal host names to their IP’s in the cluster

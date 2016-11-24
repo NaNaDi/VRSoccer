@@ -5,6 +5,7 @@ from lib.physics import create_physics_graph
 from lib.skeleton import HumanSkeleton
 from lib.BallSpawner import BallSpawner
 
+
 def create_scene(parent_node, physics, physics_root, graph):
     loader = avango.gua.nodes.TriMeshLoader()
 
@@ -44,13 +45,15 @@ def create_scene(parent_node, physics, physics_root, graph):
         _node.Material.value.set_uniform("Emissivity", 0.20) # 20% self-lighting
         _node.Material.value.EnableBackfaceCulling.value = False
 
-    ##skybox
+    #skybox
     #sky = loader.create_geometry_from_file("skybox", "data/objects/cube.obj")
     #sky.Material.value.set_uniform("ColorMap", "data/textures/skymap.jpg")
     #sky_node = avango.gua.nodes.TransformNode()
-    #sky_node.Transform.value = avango.gua.make_scale_mat(30)
+    #sky_parent = avango.gua.nodes.TransformNode()
+    #sky_parent.Transform.value = avango.gua.make_scale_mat(50)
     #sky_node.Children.value.append(sky)
-    #parent_node.Children.value.append(sky_node)
+    #sky_parent.Children.value.append(sky_node)
+    #parent_node.Children.value.append(sky_parent)
 
 
     timer = avango.nodes.TimeSensor()
@@ -62,14 +65,17 @@ def create_scene(parent_node, physics, physics_root, graph):
         Name="skel_trans")
     parent_node.Children.value.append(skel_trans)
     skeleton = HumanSkeleton(PARENT_NODE = skel_trans)
-
-    connect_matrix_to_matrix(timer = timer, mat1 = physics_dict["skel_body"].Transform, mat2 = skeleton.joints[0].Mat)
-    skel_trans.Transform.connect_from(physics_dict["skel_body"].Transform)
+    connect_matrix_to_matrix(timer=timer, mat1=physics_dict["skel_right_hand"].Transform, mat2 = skeleton.joints[11].Mat)
+    connect_matrix_to_matrix(timer=timer, mat1=physics_dict["skel_left_hand"].Transform, mat2 = skeleton.joints[7].Mat)
+    #skel_trans.Transform.connect_from(physics_dict["skel_body"].Transform)
+    #connector = connect_transform_node_to_transform_node(timer=timer, model3d=ball_node, rigid_body=physics_dict["skel_body"])
 
     #spawner = BallSpawner()
     #spawner.TimeIn.connect_from(timer.Time)
     #spawner.SceneGraph.value = graph
     #spawner.Physics.value = physics
+
+    #skeleton = None
 
     
     return (light, physics_dict, ball, skeleton, timer)
@@ -111,6 +117,13 @@ class TransformNodeConnector(avango.script.Script):
 
     def evaluate(self):
         self.ball1.Transform.value = self.sphere_body.Transform.value
+
+def connect_transform_node_to_transform_node(timer, model3d, rigid_body):
+    connector = TransformNodeConnector()
+    connector.sphere_body = rigid_body
+    connector.ball1 = model3d
+    connector.TimeIn.connect_from(timer.Time)
+    return connector
 
 class MatrixConnector(avango.script.Script):
     Matrix1 = None

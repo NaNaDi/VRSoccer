@@ -88,7 +88,7 @@ class ViewingSetup:
         #self.pipeline_description.Passes.value.append(avango.gua.nodes.TexturedQuadPassDescription())
         self.pipeline_description.Passes.value.append(avango.gua.nodes.Video3DPassDescription())
         self.pipeline_description.Passes.value.append(avango.gua.nodes.LightVisibilityPassDescription())
-        #self.pipeline_description.Passes.value.append(avango.gua.nodes.BBoxPassDescription())
+        self.pipeline_description.Passes.value.append(avango.gua.nodes.BBoxPassDescription())
         self.pipeline_description.Passes.value.append(self.resolve_pass)
         self.pipeline_description.Passes.value.append(avango.gua.nodes.TexturedScreenSpaceQuadPassDescription())
         self.pipeline_description.Passes.value.append(avango.gua.nodes.SSAAPassDescription())
@@ -130,7 +130,7 @@ class ViewingSetup:
         self.camera_node.FarClip.value = 100.0 # in meter
         self.camera_node.Resolution.value = self.window_resolution
         self.camera_node.OutputWindowName.value = self.window.Title.value
-        self.camera_node.PipelineDescription.value = self.pipeline_description
+        # self.camera_node.PipelineDescription.value = self.pipeline_description
         self.camera_node.Mode.value = PROJECTION_MODE
         self.camera_node.BlackList.value = BLACK_LIST
         self.head_node.Children.value = [self.camera_node]

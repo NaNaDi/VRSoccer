@@ -103,24 +103,24 @@ class Joint:
         return avango.gua.make_rot_mat(_angle, _axis)
 
 
-    def init_rigid_body(self, physics):
-        if physics is None:
-            print("ERROR: joint{0}.rigid_body is missing physics.".format(str(self.ID)))
+    # def init_rigid_body(self, physics):
+    #     if physics is None:
+    #         print("ERROR: joint{0}.rigid_body is missing physics.".format(str(self.ID)))
 
-        if self.rigid_body is None:
-            avango.gua.create_sphere_shape("sphere", 1.0)
+    #     if self.rigid_body is None:
+    #         avango.gua.create_sphere_shape("sphere", 1.0)
 
-            self._csn = avango.gua.nodes.CollisionShapeNode(
-                Name="joint{0}_csn".format(str(self.ID)),
-                ShapeName="sphere")
+    #         self._csn = avango.gua.nodes.CollisionShapeNode(
+    #             Name="joint{0}_csn".format(str(self.ID)),
+    #             ShapeName="sphere")
 
-            self.rigid_body = avango.gua.nodes.RigidBodyNode(
-                Name="joint{0}_rigid_body".format(str(self.ID)),
-                Mass=1.0,  # ?
-                IsKinematic=True,
-                Children=[self._csn])
+    #         self.rigid_body = avango.gua.nodes.RigidBodyNode(
+    #             Name="joint{0}_rigid_body".format(str(self.ID)),
+    #             Mass=1.0,  # ?
+    #             IsKinematic=True,
+    #             Children=[self._csn])
 
-            physics.add_rigid_body(self.rigid_body)
+    #         physics.add_rigid_body(self.rigid_body)
 
 
 class HumanSkeleton:
@@ -154,13 +154,13 @@ class HumanSkeleton:
         self.joints[4].PARENT_JOINT = self.joints[20]
         self.joints[5].PARENT_JOINT = self.joints[4]
         self.joints[6].PARENT_JOINT = self.joints[5]
-        self.joints[7].PARENT_JOINT = self.joints[6]
+        self.joints[7].PARENT_JOINT = self.joints[6] #hand left
         self.joints[8].PARENT_JOINT = self.joints[20]
         self.joints[9].PARENT_JOINT = self.joints[8]
         self.joints[10].PARENT_JOINT = self.joints[9]
-        self.joints[11].PARENT_JOINT = self.joints[10]
+        self.joints[11].PARENT_JOINT = self.joints[10] #right hand
         self.joints[12].PARENT_JOINT = self.joints[0]
-        self.joints[13].PARENT_JOINT = self.joints[12]
+        self.joints[13].PARENT_JOINT = self.joints[12] #right knee
         self.joints[14].PARENT_JOINT = self.joints[13]
         self.joints[15].PARENT_JOINT = self.joints[14]
         self.joints[16].PARENT_JOINT = self.joints[0]
@@ -173,7 +173,6 @@ class HumanSkeleton:
         self.joints[23].PARENT_JOINT = self.joints[11]
         self.joints[24].PARENT_JOINT = self.joints[10]
 
-        print(self.joints[11])
         #wundervoll
 
         ## trigger callbacks
