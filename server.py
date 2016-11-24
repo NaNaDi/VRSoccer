@@ -23,6 +23,7 @@ host_to_ip = {
     'oelze':    '141.54.172.157',
     'apollo':   '141.54.172.230',
     #'teichel':  '141.54.172.25'
+    'minos':    '141.54.147.49'
 }
 
 class Server:
@@ -52,7 +53,7 @@ class Server:
 
         #init scene
         scene_tuple = create_scene(
-        	parent_node=scene_root, physics = physics, physics_root=physics_root)
+        	parent_node=scene_root, physics = physics, physics_root=physics_root, graph=self.scenegraph)
 
         skeleton = scene_tuple[-2]
 

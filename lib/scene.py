@@ -3,8 +3,9 @@ import avango.gua
 
 from lib.physics import create_physics_graph
 from lib.skeleton import HumanSkeleton
+from lib.BallSpawner import BallSpawner
 
-def create_scene(parent_node, physics, physics_root):
+def create_scene(parent_node, physics, physics_root, graph):
     loader = avango.gua.nodes.TriMeshLoader()
 
     light = avango.gua.nodes.LightNode(
@@ -29,9 +30,11 @@ def create_scene(parent_node, physics, physics_root):
     ball = loader.create_geometry_from_file("sphere_geometry", "data/objects/sphere.obj")
     ball_node = avango.gua.nodes.TransformNode()
     ball_node.Children.value.append(ball)
-    ball_node.Transform.value = avango.gua.make_scale_mat(0.5)*avango.gua.make_trans_mat(-1,0,3)
+    ball_parent = avango.gua.nodes.TransformNode()
+    ball_parent.Transform.value = avango.gua.make_scale_mat(0.5)
+    ball_parent.Children.value.append(ball_node)
     #ball.Transform.value = avango.gua.make_trans_mat(30.0,0,0)*avango.gua.make_scale_mat(0.25)
-    parent_node.Children.value.append(ball_node)
+    parent_node.Children.value.append(ball_parent)
 
     ##load goal geometry
     goal_group = loader.create_geometry_from_file("goal_geometry", "data/arrrscene/objects/arrrscene.obj", avango.gua.LoaderFlags.DEFAULTS | avango.gua.LoaderFlags.LOAD_MATERIALS)# | avango.gua.LoaderFlags.MAKE_PICKABLE)
@@ -54,19 +57,21 @@ def create_scene(parent_node, physics, physics_root):
     #connect_ball = connect_transform_node_to_transform_node(timer=timer, model3d=ball, rigid_body=physics_dict["sphere_body"])
     ball_node.Transform.connect_from(physics_dict["sphere_body"].Transform)
 
-    ## skeleton
+    # skeleton
     skel_trans = avango.gua.nodes.TransformNode(
         Name="skel_trans")
     parent_node.Children.value.append(skel_trans)
     skeleton = HumanSkeleton(PARENT_NODE = skel_trans)
 
     connect_matrix_to_matrix(timer = timer, mat1 = physics_dict["skel_body"].Transform, mat2 = skeleton.joints[0].Mat)
-    #connect_sceleton = connect_transform_node_to_transform_node(timer = timer, model3d=ball, rigid_body=physics_dict["skel_body"])
     skel_trans.Transform.connect_from(physics_dict["skel_body"].Transform)
 
+    #spawner = BallSpawner()
+    #spawner.TimeIn.connect_from(timer.Time)
+    #spawner.SceneGraph.value = graph
+    #spawner.Physics.value = physics
+
     
-
-
     return (light, physics_dict, ball, skeleton, timer)
 
 def viveMonkey():

@@ -21,7 +21,8 @@ kinect_hosts = {
     'demeter':  '141.54.147.35',  # Oculus workstation 1
     'pan':      '141.54.147.52',  # Oculus workstation 2
     'oelze':    '141.54.172.157',
-    'apollo':   '141.54.172.230'
+    'apollo':   '141.54.172.230',
+    'minos':    '141.54.147.49'
 }
 
 def main(SERVER_IP, CLIENT_IP):

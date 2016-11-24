@@ -5,7 +5,10 @@ import math
 
 def create_physics_graph(physics, physics_root):
     #First we create a ground floor
-    agua.create_box_shape("box", agua.Vec3(10, 1, 10))
+
+    #physics.Gravity.value = agua.Vec3(0,-9.18,0)
+
+    agua.create_box_shape("box", agua.Vec3(1000, 1.0, 1000))
     floor_collision_shape = agua.nodes.CollisionShapeNode(
         Name="floor_shape",
         ShapeName="box")
@@ -14,8 +17,8 @@ def create_physics_graph(physics, physics_root):
         Name="floor_body",
         Mass=0,
         Friction=0.5,
-        Restitution=0.7,
-        Transform = agua.make_trans_mat(-0.5,-1.5,1),
+        Restitution=0,
+        Transform = agua.make_trans_mat(-0.5,-2.5,1),
         Children=[floor_collision_shape])
 
     physics.add_rigid_body(floor_body)
@@ -48,12 +51,13 @@ def create_physics_graph(physics, physics_root):
         Mass=2.0,
         Friction=0.6,
         RollingFriction=0.03,
-        Restitution=0.7,
+        Restitution=0,
         Transform=agua.make_trans_mat(0.0, 3.0, 0.0),
         Children=[sphere_collision_shape])
     physics.add_rigid_body(sphere_body)
     physics_root.Children.value.append(sphere_body)
-
+    
+    #skeleton
     skel_sphere_shape = agua.nodes.CollisionShapeNode(
         Name="skel_sphere_shape",
         ShapeName="sphere")
@@ -64,13 +68,13 @@ def create_physics_graph(physics, physics_root):
         Mass=2.0,
         Friction=0.6,
         RollingFriction=0.03,
-        Restitution=10.0,
         Children=[skel_sphere_shape])
     physics.add_rigid_body(skel_sphere_body)
     physics_root.Children.value.append(skel_sphere_body)
 
-    return {#"floor_body": floor_body,
+    return {"floor_body": floor_body,
             "sphere_body": sphere_body,
-            "skel_body": skel_sphere_body}
+            "skel_body": skel_sphere_body
+            }
 
 
