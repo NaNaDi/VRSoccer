@@ -4,6 +4,7 @@ import avango.gua
 ###import application libraries
 from lib.ViewingSetup import ViewingSetup
 from lib.scene import create_scene
+from lib.SpacemouseInput import SpacemouseInput
 
 from utils import *
 
@@ -98,6 +99,10 @@ class Server:
             CLIENT_IP = host_to_ip['pan'],
             #KINECT_FILENAME = "kr/surface_50_51_52_54.ks"
         )
+
+        spacemouse = SpacemouseInput()
+        spacemouse.sf_output_mat.value = self.client_pan.navigation_node.Transform.value
+        self.client_pan.navigation_node.Transform.connect_from(self.spacemouse.sf_output_mat.value)
 
         # distribute complete scenegraph
         distribute_all_nodes_below(NETTRANS = self.nettrans, NODE = self.nettrans)
