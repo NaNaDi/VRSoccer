@@ -62,8 +62,8 @@ class Server:
 
         ## init distribution
         self.nettrans = avango.gua.nodes.NetTransform(Name = "nettrans", Groupname = "AVSERVER|{0}|7432".format(SERVER_IP))
-        self.scene_root.Children.value.append(self.nettrans)
-        self.scenegraph.Root.value.Children.value.append(self.scene_root)
+        self.nettrans.Children.value.append(scene_root)
+        self.scenegraph.Root.value.Children.value.append(self.nettrans)
 
         self.client_group = avango.gua.nodes.TransformNode(Name = "client_group")
         self.nettrans.Children.value.append(self.client_group)
@@ -100,9 +100,9 @@ class Server:
             #KINECT_FILENAME = "kr/surface_50_51_52_54.ks"
         )
 
-        spacemouse = SpacemouseInput()
-        spacemouse.sf_output_mat.value = self.client_pan.navigation_node.Transform.value
-        self.client_pan.navigation_node.Transform.connect_from(self.spacemouse.sf_output_mat.value)
+        self.spacemouse = SpacemouseInput()
+        self.spacemouse.sf_output_mat.value = self.client_pan.navigation_node.Transform.value
+        self.client_pan.navigation_node.Transform.connect_from(self.spacemouse.sf_output_mat)
 
         # distribute complete scenegraph
         distribute_all_nodes_below(NETTRANS = self.nettrans, NODE = self.nettrans)
@@ -136,6 +136,12 @@ class ClientSetup:
         ClientSetup.number_of_instances += 1
 
         self.color = ClientSetup.color_list[self.id % len(ClientSetup.color_list)]
+
+        #### resources ###
+                
+        self.navigation_node = avango.gua.nodes.TransformNode(Name = "{0}_navigation_node".format(CLIENT_IP))
+        self.navigation_node.Tags.value = [CLIENT_IP]
+        PARENT_NODE.Children.value.append(self.navigation_node)
 
 ## Registers a scenegraph node and all of its children at a NetMatrixTransform node for distribution.
 # @param NET_TRANS_NODE The NetMatrixTransform node on which all nodes should be marked distributable.
