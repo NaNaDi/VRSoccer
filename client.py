@@ -8,6 +8,8 @@ import avango.gua as agua
 from utils import *
 from lib.scene import viveMonkey
 
+from lib.OculusViewingSetup import OculusViewingSetup
+
 # Map internal host names to their IP’s in the cluster
 kinect_hosts = {
     'arachne':  '141.54.147.27',
@@ -62,6 +64,13 @@ def main(SERVER_IP, CLIENT_IP):
     if CLIENT_IP == kinect_hosts['demeter']:
         viveMonkey()
 
+    elif CLIENT_IP == kinect_hosts['pan']:
+        ## Oculus CV Setup
+        self.viewingSetup = OculusViewingSetup(
+            SCENEGRAPH = self.scenegraph,
+            BLACK_LIST = [],
+            PHYSICS = self.physics
+        )
 
 def create_camera_with_res_passes(
     #change camera position for Athena here
