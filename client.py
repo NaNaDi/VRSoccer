@@ -34,43 +34,66 @@ def main(SERVER_IP, CLIENT_IP):
         Groupname="AVCLIENT|{0}|7432".format(SERVER_IP))
     graph.Root.value.Children.value.append(nettrans)
 
-    # viewing setup
-    size = agua.Vec2ui(1024, 768)
-    window = agua.nodes.GlfwWindow(Size=size, LeftResolution=size)
-    agua.register_window("window", window)
-    cam = create_camera_with_res_passes(
-        left_screen_path="/screen",
-        scene_graph_name="scenegraph",
-        resolution=size,
-        output_window_name="window")
-    
-    #todo: fix light
-    light = avango.gua.nodes.LightNode(
-        Type=avango.gua.LightType.POINT,
-        Name="light",
-        Color=avango.gua.Color(1.0, 1.0, 1.0),
-        Brightness=100.0,
-        Transform=(avango.gua.make_trans_mat(0.25, 5.0, 5.0) *
-                   avango.gua.make_scale_mat(100)))
+    ## init viewer
+    viewer = avango.gua.nodes.Viewer()
+    viewer.SceneGraphs.value = [graph]
 
-    screen = create_screen(name="screen", children=[cam, light])
-
-    graph.Root.value.Children.value.append(screen)
-    viewer = create_viewer(graph=graph, window=window)
-
-    while True:
-        viewer.frame()
-
+    # #                                                                  /!\
+    _loader = avango.gua.nodes.TriMeshLoader()
+    # Somehow necessary to initialize `_loader`
+    dummy_geometry = _loader.create_geometry_from_file(
+        "dummy", "data/objects/cube.obj",
+        avango.gua.LoaderFlags.DEFAULTS
+    )
+    dummy_geometry.Transform.value = avango.gua.make_trans_mat(0.0, -0.105, 0.0) * \
+                                          avango.gua.make_scale_mat(0.00000005, 0.00000001, 0.0000005)
+    graph.Root.value.Children.value.append(dummy_geometry)
+    '''
+    # self.nettrans.Children.value.append(self.dummy_geometry)
+    '''
     if CLIENT_IP == kinect_hosts['demeter']:
         viveMonkey()
 
     elif CLIENT_IP == kinect_hosts['pan']:
-        ## Oculus CV Setup
-        self.viewingSetup = OculusViewingSetup(
-            SCENEGRAPH = self.scenegraph,
+        # Oculus CV Setup
+        viewingSetup = OculusViewingSetup(
+            SCENEGRAPH = graph,
             BLACK_LIST = [],
-            PHYSICS = self.physics
         )
+        #testMonkey = _loader.create_geometry_from_file("monkey", "data/objects/monkey.obj", avango.gua.LoaderFlags.DEFAULTS)
+    elif CLIENT_IP == kinect_hosts['boreas']:
+        # viewing setup
+        size = agua.Vec2ui(1024, 768)
+        window = agua.nodes.GlfwWindow(Size=size, LeftResolution=size)
+        agua.register_window("window", window)
+        cam = create_camera_with_res_passes(
+            left_screen_path="/screen",
+            scene_graph_name="scenegraph",
+            resolution=size,
+            output_window_name="window")
+    
+        #todo: fix light
+        light = avango.gua.nodes.LightNode(
+            Type=avango.gua.LightType.POINT,
+            Name="light",
+            Color=avango.gua.Color(1.0, 1.0, 1.0),
+            Brightness=100.0,
+            Transform=(avango.gua.make_trans_mat(0.25, 5.0, 5.0) *
+                       avango.gua.make_scale_mat(100)))
+
+        screen = create_screen(name="screen", children=[cam, light])
+
+        graph.Root.value.Children.value.append(screen)
+        viewer = create_viewer(graph=graph, window=window)
+
+
+
+    # Triggers framewise evaluation of respective callback method
+    init_trigger = avango.script.nodes.Update(Callback = init_callback, Active = True)
+
+
+    while True:
+        viewer.frame()
 
 def create_camera_with_res_passes(
     #change camera position for Athena here
@@ -120,6 +143,28 @@ def create_screen(name, children):
         Transform=agua.make_trans_mat(0, 5.0, 10),
         Children=children)
     return screen
+
+def init_callback():
+        """
+        Callback function
+        """
+        # print("frame", time.clock(), len(self.nettrans.Children.value))
+
+        # Wait for distributed scenegraph to arrive
+        if len(nettrans.Children.value) > 0:
+            _client_group = nettrans.Children.value[0]
+            if _client_group.Name.value == "client_group":
+                # Identify the corresponding navigation node for this client
+                for _node in _client_group.Children.value:
+                    if _node.Name.value.count(self.client_ip) > 0:
+                        viewingSetup.navigation_node.Transform.connect_from(_node.Transform)
+                        scenegraph.Root.value.Children.value.remove(dummy_geometry)
+
+                        break  # break smallest enclosing loop
+
+            print_graph(nettrans)
+
+            init_trigger.Active.value = False # disable init callback
 
 
 if __name__ == '__main__':

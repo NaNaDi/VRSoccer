@@ -61,8 +61,8 @@ class Server:
 
         ## init distribution
         self.nettrans = avango.gua.nodes.NetTransform(Name = "nettrans", Groupname = "AVSERVER|{0}|7432".format(SERVER_IP))
-        self.nettrans.Children.value.append(scene_root)
-        self.scenegraph.Root.value.Children.value.append(self.nettrans)
+        self.scene_root.Children.value.append(self.nettrans)
+        self.scenegraph.Root.value.Children.value.append(self.scene_root)
 
         self.client_group = avango.gua.nodes.TransformNode(Name = "client_group")
         self.nettrans.Children.value.append(self.client_group)

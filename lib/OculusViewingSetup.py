@@ -30,7 +30,7 @@ class OculusViewingSetup:
     def __init__(self,
         SCENEGRAPH = None,
         BLACK_LIST = [],
-        PHYSICS = None,
+        #PHYSICS = None,
         NAVIGATION_TRANSFORM = None
         ):
 
@@ -39,9 +39,9 @@ class OculusViewingSetup:
             print("ERROR: scengraph instance missing")
             quit()
 
-        if PHYSICS is None:
-            print("ERROR: OculusViewingSetup is missing physics.")
-            quit()
+        # if PHYSICS is None:
+        #     print("ERROR: OculusViewingSetup is missing physics.")
+        #     quit()
 
         ### parameters ###
         self.printout_intervall = 1.0 # in seconds
@@ -133,7 +133,7 @@ class OculusViewingSetup:
         self.viewer.SceneGraphs.value = [SCENEGRAPH]
         self.viewer.Windows.value = [self.window]
         self.viewer.DesiredFPS.value = 200.0 # in Hz
-        self.viewer.Physics.value = PHYSICS
+        #self.viewer.Physics.value = PHYSICS
 
 
         ## init passes & render pipeline description
